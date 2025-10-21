@@ -4,15 +4,19 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import cookieParser from "cookie-parser";
-import mongoSanitize from "express-mongo-sanitize";
+//import mongoSanitize from "express-mongo-sanitize";
 import rateLimit from "express-rate-limit";
 import path from "path";
 
 // Import your custom code
-import routes from "./routes/index.js";
+import authRoutes from "./routes/auth.routes.js";
+import callRoutes from './routes/call.routes.js';
+import userRoutes from './routes/user.routes.js';
+import messageRoutes from './routes/message.routes.js';
+import conversationRoutes from './routes/conversation.routes.js';
 // import { errorMiddleware } from './middlewares/error.middleware.js';
 //import { notFound } from "./middlewares/error.middleware.js";
-//import logger from './utils/logger.js';
+import logger from './utils/logger.js';
 
 import { fileURLToPath } from 'url';
 
@@ -63,7 +67,7 @@ const limiter = rateLimit({
 app.use('/api/', limiter); // Apply only to API routes
 
 // NOSQL INJECTION PROTECTION: Sanitize user input
-app.use(mongoSanitize()); // Removes $ and . from req.body, req.params, req.query
+//app.use(mongoSanitize()); // Removes $ and . from req.body, req.params, req.query
 
 // ========================================
 // 4. REQUEST PARSING MIDDLEWARE
@@ -158,7 +162,11 @@ app.get('/health', (req, res) => {
 // ========================================
 
 // All routes start with /api
-app.use('/api', routes);
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/message', messageRoutes);
+app.use('/api/conversation', conversationRoutes);
+app.use('/api/call', callRoutes);
 
 // ========================================
 // 11. ERROR HANDLING (Must be last!)
